@@ -1,5 +1,23 @@
 <?php
-require_once __DIR__ . '/api/api.php';
+// Attempt to locate the API bootstrap file across common deployment layouts.
+$possibleApiPaths = [
+    __DIR__ . '/api/api.php',           // normal repo layout (project root)
+    __DIR__ . '/../api/api.php',        // if index.php moved into a subfolder
+    __DIR__ . '/space-shuter/api/api.php', // when working directory is parent of project folder
+    __DIR__ . '/app/api/api.php',       // container image layout that uses /app as root
+];
+$apiPath = null;
+foreach ($possibleApiPaths as $p) {
+    if (is_file($p)) { $apiPath = $p; break; }
+}
+if (!$apiPath) {
+    // Helpful error for debugging in deploy logs (avoid exposing sensitive internals in browser in production)
+    http_response_code(500);
+    echo "Server configuration error: api.php not found. Checked paths:\n" . implode("\n", $possibleApiPaths);
+    error_log('Missing api.php. Checked: ' . implode(', ', $possibleApiPaths));
+    exit;
+}
+require_once $apiPath;
 
 // Fetch top 3 recent automated articles from Supabase to show live data
 $featured_articles = fetchSupabase('articles', 'select=*&order=created_at.desc&limit=3') ?? [];

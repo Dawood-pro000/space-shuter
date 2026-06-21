@@ -1,3 +1,6 @@
+<?php
+$ROOT_URL = $ROOT_URL ?? '/';
+?>
 <!DOCTYPE html>
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
@@ -162,11 +165,15 @@
 <!-- Top Navigation Bar -->
 <header class="fixed top-0 left-0 w-full h-16 z-50 bg-surface-container-lowest/40 backdrop-blur-xl border-b border-outline-variant/30 flex justify-between items-center px-margin-desktop">
 <div class="flex items-center gap-8">
-<h1 class="font-headline-md text-headline-md text-primary-fixed tracking-widest uppercase">Project Vision</h1>
+-    <h1 class="font-headline-md text-headline-md text-primary-fixed tracking-widest uppercase">Project Vision</h1>
++    <a href="<?= htmlspecialchars($ROOT_URL) ?>index.php" class="font-headline-md text-headline-md text-primary-fixed tracking-widest uppercase">Project Vision</a>
 <nav class="hidden md:flex gap-6 items-center">
-<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Sectors</a>
-<a class="text-primary-fixed font-bold border-b-2 border-primary-fixed pb-1 font-label-caps text-label-caps" href="#">Telemetry</a>
-<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Archive</a>
+-    <a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Sectors</a>
+-    <a class="text-primary-fixed font-bold border-b-2 border-primary-fixed pb-1 font-label-caps text-label-caps" href="#">Telemetry</a>
+-    <a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Archive</a>
++    <a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Sectors</a>
++    <a class="text-primary-fixed font-bold border-b-2 border-primary-fixed pb-1 font-label-caps text-label-caps" href="<?= htmlspecialchars($ROOT_URL) ?>user/core-discovery.php">Telemetry</a>
++    <a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-caps text-label-caps" href="#">Archive</a>
 </nav>
 </div>
 <div class="flex items-center gap-4">
