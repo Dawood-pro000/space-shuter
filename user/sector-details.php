@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../api/api.php';
+include_once __DIR__ . '/../templates/bootstrap.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

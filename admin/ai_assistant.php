@@ -4,6 +4,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: ../auth/login.php');
     exit;
 }
+include_once __DIR__ . '/../templates/bootstrap.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">

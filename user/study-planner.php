@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../api/api.php';
+include_once __DIR__ . '/../templates/bootstrap.php';
 
 // In a real app, user auth would happen here.
 $user_id = 'user_001'; // Simulated user ID

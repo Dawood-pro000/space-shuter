@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/config/api.php';
+include_once __DIR__ . '/../templates/bootstrap.php';
 
 // Fetch recent articles from Supabase to show in the dashboard
 $articles = fetchSupabase('articles', 'select=id,title,category,created_at&order=created_at.desc&limit=10') ?? [];

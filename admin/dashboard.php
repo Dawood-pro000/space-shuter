@@ -5,6 +5,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     exit;
 }
 require_once __DIR__ . '/../api/api.php';
+include_once __DIR__ . '/../templates/bootstrap.php';
 
 // Fetch aggregate operational numbers via Supabase 
 $total_articles = count(fetchSupabase('articles', 'select=id') ?? []);

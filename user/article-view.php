@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/../api/api.php';
 
+// make template links root-aware
+include_once __DIR__ . '/../templates/bootstrap.php';
+
 $slug = $_GET['slug'] ?? '';
 if (!$slug) {
     header('Location: core-discovery.php');
@@ -64,10 +67,10 @@ $article = $response[0];
     <!-- Top Navigation (Documentation) -->
     <nav class="fixed top-0 w-full bg-canvas/90 backdrop-blur-md border-b border-hairline z-50 h-[56px] flex items-center px-6 justify-between">
         <div class="flex items-center gap-6">
-            <a href="../index.php" class="font-semibold tracking-tight text-lg text-ink">Project Vision</a>
+            <a href="<?= htmlspecialchars($ROOT_URL) ?>index.php" class="font-semibold tracking-tight text-lg text-ink">Project Vision</a>
         </div>
         <div class="flex items-center gap-4">
-            <a href="core-discovery.php" class="text-sm font-medium text-steel hover:text-ink transition-colors">&larr; Back to Documentation</a>
+            <a href="<?= htmlspecialchars($ROOT_URL) ?>user/core-discovery.php" class="text-sm font-medium text-steel hover:text-ink transition-colors">&larr; Back to Documentation</a>
         </div>
     </nav>
 

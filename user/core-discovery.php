@@ -3,6 +3,10 @@ require_once __DIR__ . '/../api/api.php';
 $articles = fetchSupabase('articles', 'select=id,title,slug,image_url,raw_abstract,created_at&order=created_at.desc&limit=10') ?? [];
 $heroArticle = !empty($articles) ? $articles[0] : null;
 $otherArticles = array_slice($articles, 1);
+
+// Make template links root-aware
+include_once __DIR__ . '/../templates/bootstrap.php';
+
 ?>
 
 <?php include __DIR__ . '/../templates/header.php'; ?>

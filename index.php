@@ -19,9 +19,13 @@ if (!$apiPath) {
 }
 require_once $apiPath;
 
+// Auto-include templates bootstrap to set $ROOT_URL for header links
+include_once __DIR__ . '/templates/bootstrap.php';
+
 // Fetch top 3 recent automated articles from Supabase to show live data
 $featured_articles = fetchSupabase('articles', 'select=*&order=created_at.desc&limit=3') ?? [];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
