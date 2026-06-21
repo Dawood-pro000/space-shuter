@@ -1,3 +1,9 @@
+<?php
+require_once __DIR__ . '/config/api.php';
+$articles = fetchSupabase('articles', 'select=id,title,slug,image_url,raw_abstract,created_at&order=created_at.desc&limit=10') ?? [];
+$heroArticle = !empty($articles) ? $articles[0] : null;
+$otherArticles = array_slice($articles, 1);
+?>
 <!DOCTYPE html>
 
 <html class="dark" lang="en"><head>
@@ -254,57 +260,46 @@
 <!-- Hero Highlight Discovery -->
 <section class="glass-panel group overflow-hidden h-[400px] flex">
 <div class="scanline"></div>
+<?php if ($heroArticle): ?>
 <div class="w-2/3 relative">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="An awe-inspiring cinematic view of Kepler-186f from high orbit. The planet exhibits vibrant crimson foliage and deep purple oceans, illuminated by the soft red light of an M-type dwarf star. The atmosphere glows with a thin cyan-colored haze. In the foreground, the sharp edge of a chrome-textured satellite reveals intricate mechanical detail. The overall palette is deep space black with intense red and cyan accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAElQPbY6q1SCRjCWAgBApxbSU-aNpQE3aEFVywzIx09BCmihH0Jzbkhg6FEyHAlBJzjcqavqgIM4VIgefoXO9XZd93AiwsA_Ag7xx4DgsAeGm-yLU-n_b9xo40RhjIssuH4-DGc5oZB1gHbbWh8y-406A7RKraeFGDD4vD3D5kquDTqDLFd-FbmJaJ15WvThFl65VcsWHWqhPnIorS1RDCt_paYp5sCJEVlknAbas2JnWUl6YFdtfrRy700cFbrPFYtKh8j0j231E"/>
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="<?= htmlspecialchars($heroArticle['title']) ?>" src="<?= htmlspecialchars($heroArticle['image_url']) ?>"/>
 <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-surface-container-lowest/80"></div>
 <div class="absolute top-4 left-4 p-2 bg-surface-container-lowest/80 border border-primary-fixed/30 text-primary-fixed font-code-data text-[10px]">
-                            COORDS: 17h 59m 24s | +44° 24′ 45″
+                            ID: <?= htmlspecialchars($heroArticle['id']) ?> | <?= date('Y-m-d', strtotime($heroArticle['created_at'])) ?>
                         </div>
 </div>
 <div class="w-1/3 p-8 flex flex-col justify-center bg-surface-container-lowest/40 backdrop-blur-md border-l border-outline-variant/30">
-<span class="text-primary-fixed font-code-data text-[12px] mb-2">TARGET_ID: KEPLER-186F</span>
-<h3 class="font-headline-md text-headline-md mb-4 uppercase">Bio-Luminous Exoplanet</h3>
-<p class="text-on-surface-variant font-body-md text-body-md mb-8 leading-relaxed">
-                            Atmospheric parsing indicates significant bio-signatures. Surface scans suggest large-scale photosynthesis occurring within a non-green spectral range.
+<h3 class="font-headline-md text-headline-md mb-4 uppercase text-on-surface"><?= htmlspecialchars($heroArticle['title']) ?></h3>
+<p class="text-on-surface-variant font-body-md text-body-md mb-8 leading-relaxed line-clamp-4">
+                            <?= htmlspecialchars($heroArticle['raw_abstract']) ?>
                         </p>
-<button class="border border-primary-fixed text-primary-fixed px-6 py-3 font-label-caps text-label-caps hover:bg-primary-fixed hover:text-on-primary-fixed transition-all flex items-center gap-2 group/btn self-start">
+<a href="article-view.php?slug=<?= htmlspecialchars($heroArticle['slug']) ?>" class="border border-primary-fixed text-primary-fixed px-6 py-3 font-label-caps text-label-caps hover:bg-primary-fixed hover:text-on-primary-fixed transition-all flex items-center gap-2 group/btn self-start">
                             VIEW DATA
                             <span class="material-symbols-outlined text-[18px] group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-</button>
+</a>
 </div>
+<?php else: ?>
+<div class="w-full p-8 flex items-center justify-center text-outline font-code-data">NO NEW DISCOVERIES IN DATABASE. RUN FETCH SEQUENCE.</div>
+<?php endif; ?>
 </section>
 <!-- Grid of Discoveries -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-<!-- Card 2 -->
+<?php foreach ($otherArticles as $index => $article): ?>
 <div class="glass-panel group p-6 hover:border-primary-fixed/60 transition-colors">
 <div class="relative h-48 mb-6 overflow-hidden border border-outline-variant/30">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A macro astronomical scan of a vibrant, multi-colored nebula, featuring swirls of deep violet, neon blue, and electric pink gas clouds. Sharp, bright stars pierce through the haze like brilliant diamonds. Technical scan lines and data overlay grids are subtly visible over the image. The aesthetic is futuristic, cold, and immensely detailed." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ70uF5X25Tr5VBGtOtZJREZyRqidTRbGmlVSiyCc-DDu7WG5FtaWSrkQyZhkdrIVNFoJMGG1jLxBroZocUBssMRKkmsIMQwArBctjIZeWvaSzr8Haybnm7eWLQLrnBUesw2Qa0uPrOF9NyWJOTJNHRpie6Crk17q79qhD2fMW1FZkI0FyEMrEKqIw9oap-lBkyLiqeZcjBvB9va47Ar88GamCKbI89BrB39GiIFUZrPvnZPviG3OqtUbsZBuTuux5Htma03pkThc"/>
-<div class="absolute top-2 right-2 text-[10px] font-code-data text-on-surface/50">#SN-2044-X</div>
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="<?= htmlspecialchars($article['title']) ?>" src="<?= htmlspecialchars($article['image_url']) ?>"/>
+<div class="absolute top-2 right-2 text-[10px] font-code-data text-on-surface/50">#LOG-<?= $index + 1 ?></div>
 </div>
-<h4 class="font-headline-md text-[20px] mb-2 uppercase text-on-surface">Nebula V39-Delta</h4>
+<h4 class="font-headline-md text-[20px] mb-2 uppercase text-on-surface"><?= htmlspecialchars($article['title']) ?></h4>
 <p class="text-on-surface-variant font-body-md text-body-md mb-6 line-clamp-2">
-                            Thermal anomalies detected in sector 9. Gaseous expansion exceeding predicted velocity by 12%.
+                            <?= htmlspecialchars($article['raw_abstract']) ?>
                         </p>
 <div class="flex justify-between items-center">
-<span class="font-code-data text-secondary-fixed text-[12px]">STATUS: NOMINAL</span>
-<button class="text-primary-fixed font-label-caps text-label-caps hover:underline">ANALYZE</button>
+<span class="font-code-data text-secondary-fixed text-[12px] uppercase">DATE: <?= date('Y-m-d', strtotime($article['created_at'])) ?></span>
+<a href="article-view.php?slug=<?= htmlspecialchars($article['slug']) ?>" class="text-primary-fixed font-label-caps text-label-caps hover:underline">ANALYZE</a>
 </div>
 </div>
-<!-- Card 3 -->
-<div class="glass-panel group p-6 hover:border-primary-fixed/60 transition-colors">
-<div class="relative h-48 mb-6 overflow-hidden border border-outline-variant/30">
-<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="A visualization of a high-frequency radio signal intercept from deep space. The visual shows complex, rhythmic wave patterns in a neon cyan color against an absolute black void background. Subtle particle effects suggest cosmic dust being disturbed by the signal's energy. Minimalist HUD elements like frequency markers and signal strength bars frame the composition." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBySPg8Js6c1atrfvT0YgxDLDQAjmLldxiTk8x_9gc7txg-FAWfpyi3Fa3zB9tfOd1FiaR8DMB28eH15NpAWHAtukVTSwtBnCjyuozhxhQXUWK8YQDtv1g3dcEuxlPj7y6O6HFWtShMhi3VDS-EJyFkpgmDs6kYwKoCFY5LFMgqHJoNq0tQVYGCHrjbfeTOgWHpM8ZKLnolcT-s1Z-vyjhdN0wXbJ2qJoBPn3YzkDyurFFc3NkOfjrMx1vmW5asJfqYptkMOWOKCUQ"/>
-<div class="absolute top-2 right-2 text-[10px] font-code-data text-on-surface/50">#SIG-ALPHA-9</div>
-</div>
-<h4 class="font-headline-md text-[20px] mb-2 uppercase text-on-surface">Signal Intercept</h4>
-<p class="text-on-surface-variant font-body-md text-body-md mb-6 line-clamp-2">
-                            Pattern recognized: Non-random sequence intercepted from vicinity of Sagittarius A*. Decoding in progress.
-                        </p>
-<div class="flex justify-between items-center">
-<span class="font-code-data text-secondary-fixed text-[12px]">STRENGTH: 89%</span>
-<button class="text-primary-fixed font-label-caps text-label-caps hover:underline">DECODE</button>
-</div>
-</div>
+<?php endforeach; ?>
 </div>
 </div>
 <!-- Sidebar Telemetry -->
