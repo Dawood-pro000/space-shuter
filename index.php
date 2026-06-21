@@ -1,139 +1,159 @@
 <?php
-require_once __DIR__ . '/config/api.php';
+require_once __DIR__ . '/api/api.php';
 
 // Fetch top 3 recent automated articles from Supabase to show live data
 $featured_articles = fetchSupabase('articles', 'select=*&order=created_at.desc&limit=3') ?? [];
 ?>
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Space Shutter | Cosmic Discoveries Portal</title>
+    <title>Mintlify | The Intelligent Knowledge Platform</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary-fixed": "#62f9ee",
-                        "secondary-fixed": "#98f2ed",
-                        "outline": "#859491",
-                        "outline-variant": "#3c4948",
-                        "error": "#ffb4ab",
-                        "surface-container-lowest": "#0c0f0f",
-                        "surface-container-low": "#1a1c1d",
-                        "surface-variant": "#333536",
-                        "on-surface-variant": "#bacac7"
+                        primary: "#0a0a0a",
+                        "on-primary": "#ffffff",
+                        "brand-green": "#00d4a4",
+                        "brand-green-deep": "#00b48a",
+                        canvas: "#ffffff",
+                        "canvas-dark": "#0a0a0a",
+                        surface: "#f7f7f7",
+                        "surface-soft": "#fafafa",
+                        hairline: "#e5e5e5",
+                        ink: "#0a0a0a",
+                        charcoal: "#1c1c1e",
+                        slate: "#3a3a3c",
+                        steel: "#5a5a5c",
+                        "hero-sky-from": "#87a8c8",
+                        "hero-sky-to": "#f5e9d8",
+                        "on-dark": "#ffffff",
+                        "on-dark-muted": "#b3b3b3",
                     },
                     fontFamily: {
-                        "body-md": ["Space Grotesk"],
-                        "headline-lg": ["Orbitron"],
-                        "code-data": ["Space Grotesk"],
-                        "label-caps": ["Space Grotesk"],
-                        "headline-md": ["Orbitron"]
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        md: "8px",
+                        lg: "12px",
+                        xl: "16px",
+                        full: "9999px"
                     }
                 }
             }
         }
     </script>
     <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            line-height: 1;
+        body { background-color: #ffffff; color: #0a0a0a; font-family: 'Inter', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(180deg, #87a8c8 0%, #f5e9d8 100%);
         }
-        .glass-panel {
-            background: rgba(31, 40, 51, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(60, 73, 72, 0.3);
-        }
-        .neon-glow { text-shadow: 0 0 10px rgba(98, 249, 238, 0.6); }
-        body {
-            background-color: #0b0c10;
-            color: #e2e2e3;
-        }
-        .scanline {
-            width: 100%;
-            height: 1px;
-            background: rgba(102, 252, 241, 0.3);
-            position: absolute;
-            top: 0;
-            left: 0;
-            animation: scan 4s linear infinite;
-        }
-        @keyframes scan {
-            from { top: 0; }
-            to { top: 100%; }
+        .hero-mockup-shadow {
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 24px 48px -8px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between antialiased font-body-md text-base overflow-x-hidden">
+<body class="antialiased selection:bg-brand-green selection:text-primary">
 
-    <div class="fixed inset-0 pointer-events-none opacity-20 z-0">
-        <div class="absolute top-8 left-8 font-code-data text-sm text-primary-fixed">COORD: 00.00.01 // GATEWAY</div>
-        <div class="w-full h-full border border-outline-variant/10 m-4"></div>
-    </div>
-
-    <nav class="w-full max-w-7xl mx-auto px-6 py-5 flex justify-between items-center border-b border-outline-variant/30 z-50 relative">
-        <div class="font-headline-md text-2xl tracking-widest text-primary-fixed neon-glow uppercase flex items-center gap-2">
-            <span class="material-symbols-outlined">rocket_launch</span> SPACE SHUTTER
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 w-full bg-canvas/80 backdrop-blur-md border-b border-hairline z-50 h-[64px] flex items-center px-8 justify-between">
+        <div class="flex items-center gap-8">
+            <a href="index.php" class="font-semibold tracking-tight text-xl text-ink">Project Vision</a>
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-steel">
+                <a href="#" class="hover:text-ink transition-colors">Solutions</a>
+                <a href="#" class="hover:text-ink transition-colors">Pricing</a>
+                <a href="user/core-discovery.php" class="hover:text-ink transition-colors">Documentation</a>
+            </div>
         </div>
-        <div class="space-x-6">
-            <a href="login.php" class="px-6 py-3 rounded-none bg-primary-fixed text-[#0b0c10] hover:bg-white hover:text-black transition-all font-label-caps font-bold tracking-widest text-sm border border-primary-fixed shadow-[0_0_15px_rgba(98,249,238,0.3)]">Login to Engine</a>
+        <div class="flex items-center gap-4">
+            <a href="auth/login.php" class="text-sm font-medium text-ink hover:text-slate transition-colors">Sign in</a>
+            <a href="auth/login.php" class="bg-primary text-on-primary px-5 py-2.5 rounded-full text-sm font-medium hover:bg-charcoal transition-colors">Get Started</a>
         </div>
     </nav>
 
-    <header class="max-w-5xl mx-auto text-center px-6 my-20 relative z-10">
-        <span class="font-code-data text-xs font-semibold tracking-widest text-secondary-fixed uppercase bg-surface-variant/30 px-4 py-2 rounded-none border border-secondary-fixed/50">NASA Discovery System Engine</span>
-        <h1 class="font-headline-lg text-5xl md:text-7xl font-extrabold tracking-tight mt-8 mb-6 leading-tight uppercase text-white">
-            Explore True Aerospace <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-fixed to-secondary-fixed">Breakthroughs</span>
-        </h1>
-        <p class="font-body-md text-on-surface-variant text-lg max-w-3xl mx-auto leading-relaxed">
-            A continuous automated pipeline compiling daily science archives, processed instantly via Gemini flash translation layers into readable operational briefings.
-        </p>
-        <div class="mt-12 flex justify-center gap-6">
-            <a href="core-discovery.php" class="px-8 py-4 glass-panel border border-primary-fixed text-primary-fixed hover:bg-primary-fixed hover:text-black transition-colors font-label-caps font-bold tracking-widest text-sm flex items-center gap-2">
-                <span class="material-symbols-outlined">explore</span> ENTER DEEP ARCHIVE
-            </a>
-        </div>
-    </header>
-
-    <main class="max-w-7xl w-full mx-auto px-6 mb-24 relative z-10">
-        <h2 class="font-headline-md text-2xl font-bold mb-8 flex items-center gap-3 text-white uppercase tracking-wider border-b border-outline-variant/50 pb-4">
-            <span class="w-2 h-6 bg-primary-fixed rounded-none"></span> Recent Log Entries
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <?php if (!empty($featured_articles)): foreach ($featured_articles as $article): ?>
-                <a href="article-view.php?slug=<?= urlencode($article['slug'] ?? '') ?>" class="glass-panel overflow-hidden flex flex-col group hover:border-primary-fixed/50 transition duration-300 relative">
-                    <div class="scanline hidden group-hover:block"></div>
-                    <div class="h-48 bg-surface-container-lowest bg-cover bg-center border-b border-outline-variant/30 relative" style="background-image: url('<?= htmlspecialchars($article['image_url'] ?? 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=1024') ?>')">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0b0c10] to-transparent"></div>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow relative z-10">
-                        <span class="font-code-data text-[10px] font-semibold text-secondary-fixed tracking-[0.2em] uppercase mb-2">ID: <?= htmlspecialchars($article['category'] ?? 'UNKNOWN') ?></span>
-                        <h3 class="font-headline-md text-xl text-white mb-3 group-hover:text-primary-fixed transition leading-snug"><?= htmlspecialchars($article['title']) ?></h3>
-                        <p class="font-body-md text-on-surface-variant text-sm line-clamp-3 mb-6 flex-grow"><?= strip_tags($article['beautified_content'] ?? $article['raw_abstract'] ?? '') ?></p>
-                        <div class="font-code-data text-[10px] text-outline pt-4 border-t border-outline-variant/30 uppercase tracking-widest">
-                            Logged: <?= date('M d, Y', strtotime($article['created_at'] ?? 'now')) ?>
-                        </div>
-                    </div>
+    <!-- Atmospheric Hero Section -->
+    <section class="hero-gradient pt-32 pb-24 px-8 min-h-[80vh] flex flex-col items-center justify-center text-center overflow-hidden relative">
+        <div class="max-w-4xl relative z-10 space-y-8 mt-12">
+            <h1 class="text-[72px] leading-[1.05] tracking-[-2px] font-semibold text-primary">
+                The intelligent<br/>Knowledge Platform
+            </h1>
+            <p class="text-lg text-slate max-w-2xl mx-auto font-normal">
+                Mintlify presents documentation infrastructure with a dual-mode aesthetic. We deliver atmospheric marketing presentation paired with dense developer-grade documentation surfaces.
+            </p>
+            <div class="flex items-center justify-center gap-4 pt-4">
+                <a href="user/core-discovery.php" class="bg-brand-green text-primary px-6 py-3 rounded-full text-sm font-medium hover:bg-brand-green-deep transition-colors shadow-sm">
+                    Start exploring
                 </a>
-            <?php endforeach; else: ?>
-                <div class="col-span-3 text-center py-12 glass-panel">
-                    <span class="material-symbols-outlined text-4xl text-outline mb-4">satellite_alt</span>
-                    <p class="font-code-data text-outline tracking-widest uppercase">No telemetry records loaded into database matrix yet.<br>Run the T-002 cron ingestion engine.</p>
-                </div>
-            <?php endif; ?>
+                <a href="auth/login.php" class="bg-transparent border border-primary text-primary px-6 py-3 rounded-full text-sm font-medium hover:bg-primary/5 transition-colors">
+                    Talk to sales
+                </a>
+            </div>
         </div>
-    </main>
+        
+        <!-- Hero Product Mockup -->
+        <div class="mt-20 w-full max-w-5xl bg-canvas rounded-lg border border-hairline hero-mockup-shadow overflow-hidden relative z-10 flex text-left h-[500px]">
+            <div class="w-64 bg-surface border-r border-hairline p-4 hidden md:block">
+                <div class="text-[11px] font-semibold uppercase tracking-[0.5px] text-steel mb-4 mt-2 px-2">Components</div>
+                <div class="space-y-1">
+                    <div class="px-2 py-1.5 text-sm font-medium text-ink bg-canvas rounded-md shadow-sm border border-hairline">Overview</div>
+                    <div class="px-2 py-1.5 text-sm text-steel hover:text-ink cursor-pointer">Quickstart</div>
+                    <div class="px-2 py-1.5 text-sm text-steel hover:text-ink cursor-pointer">API Reference</div>
+                </div>
+            </div>
+            <div class="flex-1 p-10 overflow-hidden">
+                <h2 class="text-3xl font-semibold text-ink tracking-tight mb-4">Latest Documentation</h2>
+                <p class="text-slate text-base mb-8">Access the newest telemetry and aerospace articles directly from the Supabase registry.</p>
+                
+                <div class="space-y-4">
+                    <?php if (empty($featured_articles)): ?>
+                        <div class="p-4 border border-hairline rounded-md text-sm text-steel">No new documentation available.</div>
+                    <?php else: ?>
+                        <?php foreach ($featured_articles as $article): ?>
+                        <div class="p-5 border border-hairline rounded-lg hover:shadow-sm transition-shadow flex items-start justify-between group cursor-pointer bg-canvas" onclick="window.location.href='user/article-view.php?slug=<?= htmlspecialchars($article['slug']) ?>'">
+                            <div>
+                                <h3 class="text-base font-semibold text-ink mb-1 group-hover:text-brand-green transition-colors"><?= htmlspecialchars($article['title']) ?></h3>
+                                <p class="text-sm text-slate line-clamp-1"><?= htmlspecialchars($article['raw_abstract']) ?></p>
+                            </div>
+                            <span class="text-xs font-medium text-steel bg-surface px-2 py-1 rounded-sm border border-hairline whitespace-nowrap">API Ref</span>
+                        </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <footer class="w-full text-center py-8 border-t border-outline-variant/30 font-code-data text-xs text-on-surface-variant z-10 relative bg-[#0c0f0f]/80">
-        &copy; 2144 SPACE SHUTTER WORKSPACE ENGINE. ALL TELEMETRY OPEN SOURCE VIA NASA API.
+    <!-- Footer -->
+    <footer class="bg-canvas border-t border-hairline py-16 px-8">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between gap-12">
+            <div class="space-y-4">
+                <div class="font-semibold tracking-tight text-xl text-ink">Project Vision</div>
+                <p class="text-sm text-steel">© 2026 Space Shutter Systems. All rights reserved.</p>
+            </div>
+            <div class="flex gap-16">
+                <div class="space-y-4">
+                    <h4 class="text-sm font-medium text-ink">Product</h4>
+                    <div class="flex flex-col gap-2 text-sm text-steel">
+                        <a href="#" class="hover:text-ink transition-colors">Features</a>
+                        <a href="#" class="hover:text-ink transition-colors">Integrations</a>
+                        <a href="#" class="hover:text-ink transition-colors">Pricing</a>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h4 class="text-sm font-medium text-ink">Resources</h4>
+                    <div class="flex flex-col gap-2 text-sm text-steel">
+                        <a href="#" class="hover:text-ink transition-colors">Documentation</a>
+                        <a href="#" class="hover:text-ink transition-colors">API Reference</a>
+                        <a href="#" class="hover:text-ink transition-colors">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
 
 </body>

@@ -1,145 +1,144 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: ../login.php');
+    header('Location: ../auth/login.php');
     exit;
 }
-require_once __DIR__ . '/../config/api.php';
+require_once __DIR__ . '/../api/api.php';
 
-// Fetch aggregate operational numbers via Supabase REST API
-$articles = fetchSupabase('articles', 'select=id') ?? [];
-$article_count = count($articles);
-
-// Simulated tracking count for now until learning_tracks table is fully hydrated
-$track_count = 0; 
+// Fetch aggregate operational numbers via Supabase 
+$total_articles = count(fetchSupabase('articles', 'select=id') ?? []);
+$recent_logs = fetchSupabase('articles', 'select=id,title,created_at&order=created_at.desc&limit=5') ?? [];
 ?>
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Space Shutter | Central Command Station</title>
+    <title>Admin Dashboard | Project Vision</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
-            darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary-fixed": "#62f9ee",
-                        "secondary-fixed": "#98f2ed",
-                        "outline": "#859491",
-                        "outline-variant": "#3c4948",
-                        "error": "#ffb4ab",
-                        "surface-container-lowest": "#0c0f0f",
-                        "surface-container-low": "#1a1c1d",
-                        "surface-variant": "#333536",
-                        "on-surface-variant": "#bacac7"
+                        primary: "#0a0a0a",
+                        "on-primary": "#ffffff",
+                        "brand-green": "#00d4a4",
+                        canvas: "#ffffff",
+                        surface: "#f7f7f7",
+                        "surface-soft": "#fafafa",
+                        hairline: "#e5e5e5",
+                        ink: "#0a0a0a",
+                        slate: "#3a3a3c",
+                        steel: "#5a5a5c",
                     },
                     fontFamily: {
-                        "body-md": ["Space Grotesk"],
-                        "headline-lg": ["Orbitron"],
-                        "code-data": ["Space Grotesk"],
-                        "label-caps": ["Space Grotesk"],
-                        "headline-md": ["Orbitron"]
-                    }
+                        sans: ["Inter", "sans-serif"],
+                        mono: ["Geist Mono", "monospace"],
+                    },
+                    borderRadius: { md: "8px", lg: "12px", full: "9999px" }
                 }
             }
         }
     </script>
-    <style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            line-height: 1;
-        }
-        .glass-panel {
-            background: rgba(31, 40, 51, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(60, 73, 72, 0.3);
-        }
-        body { background-color: #0b0c10; color: #e2e2e3; }
-        .sidebar-blur { background: rgba(12, 15, 15, 0.8); backdrop-filter: blur(20px); border-right: 1px solid rgba(60, 73, 72, 0.3); }
-    </style>
 </head>
-<body class="min-h-screen flex antialiased font-body-md text-base">
+<body class="antialiased selection:bg-brand-green selection:text-primary min-h-screen flex bg-surface-soft">
 
-    <aside class="w-64 sidebar-blur flex flex-col justify-between p-6 fixed h-full z-40">
-        <div class="space-y-10">
-            <div class="font-headline-md text-xl tracking-widest text-primary-fixed uppercase flex items-center gap-2">
-                <span class="material-symbols-outlined">satellite_alt</span> SHUTTER OS
+    <!-- Sidebar -->
+    <aside class="w-[240px] fixed left-0 top-0 bottom-0 bg-canvas border-r border-hairline p-4 flex flex-col justify-between">
+        <div class="space-y-6 mt-4">
+            <div class="px-3">
+                <span class="font-semibold tracking-tight text-lg text-ink">Project Vision</span>
             </div>
-            <nav class="space-y-2">
-                <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 bg-primary-fixed/10 text-primary-fixed border-l-4 border-primary-fixed font-label-caps text-xs tracking-widest uppercase transition">
-                    <span class="material-symbols-outlined text-sm">dashboard</span> Command Hub
-                </a>
-                <a href="ai_assistant.php" class="flex items-center gap-3 px-4 py-3 text-outline hover:bg-surface-variant/30 hover:text-secondary-fixed font-label-caps text-xs tracking-widest uppercase transition">
-                    <span class="material-symbols-outlined text-sm">psychology</span> Co-Pilot AI
-                </a>
-                <a href="../core-discovery.php" class="flex items-center gap-3 px-4 py-3 text-outline hover:bg-surface-variant/30 hover:text-white font-label-caps text-xs tracking-widest uppercase transition">
-                    <span class="material-symbols-outlined text-sm">public</span> Public Archive
-                </a>
+            
+            <nav class="space-y-1">
+                <a href="dashboard.php" class="block px-3 py-1.5 rounded-sm text-sm font-medium bg-surface text-ink">Overview</a>
+                <a href="ai_assistant.php" class="block px-3 py-1.5 rounded-sm text-sm text-steel hover:text-ink transition-colors">Co-Pilot AI</a>
+                <a href="../user/core-discovery.php" class="block px-3 py-1.5 rounded-sm text-sm text-steel hover:text-ink transition-colors">Documentation</a>
             </nav>
         </div>
-        <div>
-            <a href="../logout.php" class="flex items-center gap-2 text-[10px] font-code-data uppercase tracking-widest text-error hover:underline opacity-80 hover:opacity-100">
-                <span class="material-symbols-outlined text-xs">power_settings_new</span> Terminate Session
-            </a>
+        
+        <div class="px-3 mb-4">
+            <a href="../auth/logout.php" class="text-[13px] font-medium text-steel hover:text-[#d45656] transition-colors">Sign out</a>
         </div>
     </aside>
 
-    <main class="flex-grow p-10 max-w-7xl ml-64 relative z-10">
-        <div class="fixed inset-0 pointer-events-none opacity-20 z-0 pl-64">
-            <div class="w-full h-full border border-outline-variant/10 m-4"></div>
-        </div>
-
-        <header class="mb-12 relative z-10">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="font-headline-lg text-4xl font-extrabold tracking-tight uppercase text-white">Central Station</h1>
-                    <p class="font-code-data text-xs text-secondary-fixed mt-2 tracking-[0.2em] uppercase">Platform architecture logging and operational data control center.</p>
-                </div>
-                <div class="font-code-data text-[10px] border border-error text-error px-3 py-1 uppercase tracking-widest">
-                    KEY #3 SECURE LINK ACTIVE
-                </div>
-            </div>
+    <!-- Main Content -->
+    <main class="flex-1 ml-[240px] p-10 max-w-5xl">
+        <header class="mb-10">
+            <h1 class="text-[36px] font-semibold text-ink leading-[1.2] tracking-[-0.5px] mb-2">Admin Dashboard</h1>
+            <p class="text-[16px] text-slate font-normal">Manage ingestion pipelines and view system analytics.</p>
         </header>
 
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 relative z-10">
-            <div class="glass-panel p-8 border-l-4 border-primary-fixed relative overflow-hidden group">
-                <div class="absolute right-[-20px] top-[-20px] opacity-10 group-hover:opacity-20 transition-opacity">
-                    <span class="material-symbols-outlined text-9xl text-primary-fixed">description</span>
-                </div>
-                <div class="font-code-data text-[10px] font-semibold uppercase tracking-[0.2em] text-outline mb-2">Ingested Articles (NASA)</div>
-                <div class="font-headline-lg text-6xl text-primary-fixed"><?= $article_count ?></div>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-canvas p-6 rounded-lg border border-hairline shadow-[rgba(0,0,0,0.02)_0px_4px_12px_0px]">
+                <div class="text-[13px] font-medium text-steel mb-2 uppercase tracking-[0.5px]">Total Articles</div>
+                <div class="text-[36px] font-semibold text-ink"><?= $total_articles ?></div>
             </div>
-            <div class="glass-panel p-8 border-l-4 border-secondary-fixed relative overflow-hidden group">
-                <div class="absolute right-[-20px] top-[-20px] opacity-10 group-hover:opacity-20 transition-opacity">
-                    <span class="material-symbols-outlined text-9xl text-secondary-fixed">timeline</span>
-                </div>
-                <div class="font-code-data text-[10px] font-semibold uppercase tracking-[0.2em] text-outline mb-2">Active User Learning Tracks</div>
-                <div class="font-headline-lg text-6xl text-secondary-fixed"><?= $track_count ?></div>
-            </div>
-        </section>
-
-        <section class="glass-panel p-10 relative z-10 border-t border-outline-variant/50">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="material-symbols-outlined text-error">build_circle</span>
-                <h2 class="font-headline-md text-2xl font-bold uppercase text-white">System Maintenance</h2>
-            </div>
-            <p class="font-body-md text-sm text-on-surface-variant mb-8">Manually trigger background engines outside the scheduled 5-hour cron windows. This activates the dual-agent Gemini pipeline.</p>
             
-            <div class="flex gap-4">
-                <!-- Points to the cron script. When deployed, running this via web fetches new data -->
-                <a href="../cron/fetch_nasa_data.php" target="_blank" class="px-8 py-4 bg-error/10 border border-error text-error hover:bg-error hover:text-[#0b0c10] font-label-caps font-bold tracking-widest text-sm uppercase transition-colors flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">rocket_launch</span>
-                    Execute T-002 Ingestion
-                </a>
+            <div class="bg-canvas p-6 rounded-lg border border-hairline shadow-[rgba(0,0,0,0.02)_0px_4px_12px_0px]">
+                <div class="text-[13px] font-medium text-steel mb-2 uppercase tracking-[0.5px]">API Status</div>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brand-green"></span>
+                    <span class="text-[16px] font-semibold text-ink">Operational</span>
+                </div>
             </div>
-        </section>
+
+            <div class="bg-canvas p-6 rounded-lg border border-hairline shadow-[rgba(0,0,0,0.02)_0px_4px_12px_0px] flex flex-col justify-center">
+                <button onclick="triggerCron()" id="cronBtn" class="w-full bg-primary text-on-primary text-[14px] font-medium rounded-full py-[10px] hover:bg-[#1c1c1e] transition-colors">
+                    Trigger Manual Ingestion
+                </button>
+            </div>
+        </div>
+
+        <!-- Recent Logs Table -->
+        <div class="bg-canvas rounded-lg border border-hairline overflow-hidden">
+            <div class="px-6 py-4 border-b border-hairline bg-surface flex justify-between items-center">
+                <h3 class="text-[14px] font-medium text-ink">Recent Ingestion Logs</h3>
+            </div>
+            <div class="divide-y divide-hairline">
+                <?php if (empty($recent_logs)): ?>
+                    <div class="p-6 text-center text-sm text-steel">No logs found in the database.</div>
+                <?php else: ?>
+                    <?php foreach ($recent_logs as $log): ?>
+                    <div class="p-4 px-6 flex justify-between items-center">
+                        <div>
+                            <div class="text-[14px] font-medium text-ink"><?= htmlspecialchars($log['title']) ?></div>
+                            <div class="text-[13px] text-steel font-mono mt-1">ID: <?= htmlspecialchars($log['id']) ?></div>
+                        </div>
+                        <div class="text-[13px] text-steel font-mono">
+                            <?= date('M j, Y H:i:s', strtotime($log['created_at'])) ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
     </main>
 
+    <script>
+        function triggerCron() {
+            const btn = document.getElementById('cronBtn');
+            btn.innerText = 'Executing...';
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            fetch('../cron/fetch_nasa_data.php')
+                .then(res => res.text())
+                .then(data => {
+                    alert('Ingestion Complete. Check logs.');
+                    window.location.reload();
+                })
+                .catch(err => {
+                    alert('Ingestion Failed.');
+                    btn.innerText = 'Trigger Manual Ingestion';
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                });
+        }
+    </script>
 </body>
 </html>
