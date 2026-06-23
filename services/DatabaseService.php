@@ -6,16 +6,19 @@ class DatabaseService {
     private $conn;
 
     private function __construct() {
-        $db_host = getenv('SUPABASE_DB_HOST') ?: 'aws-0-us-east-1.pooler.supabase.com';
         $db_port = getenv('SUPABASE_DB_PORT') ?: '5432';
         $db_name = getenv('SUPABASE_DB_NAME') ?: 'postgres';
         
-        $db_user = getenv('SUPABASE_DB_USER');
-        if (!$db_user) {
-            $url = getenv('SUPABASE_URL');
-            if ($url && preg_match('/https:\/\/([^.]+)\.supabase\.co/', $url, $matches)) {
-                $db_user = 'postgres.' . $matches[1];
-            }
+        $db_host = getenv('SUPABASE_DB_HOST');
+        $db_user = getenv('SUPABASE_DB_USER') ?: 'postgres';
+        
+        $url = getenv('SUPABASE_URL');
+        if (!$db_host && $url && preg_match('/https:\/\/([^.]+)\.supabase\.co/', $url, $matches)) {
+            $db_host = 'db.' . $matches[1] . '.supabase.co'; // Use direct connection
+        }
+
+        if (!$db_host) {
+            $db_host = 'aws-0-us-east-1.pooler.supabase.com';
         }
         
         $db_pass = getenv('SUPABASE_DB_PASSWORD');
