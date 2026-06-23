@@ -43,10 +43,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data = json_decode($response, true);
         
         if ($httpCode >= 200 && $httpCode < 300) {
+            // Extract User ID and Email from Supabase response
+            $user_id = $data['id'] ?? ($data['user']['id'] ?? null);
+            $registered_email = $data['email'] ?? ($data['user']['email'] ?? $email);
+            
+            if ($user_id && $registered_email) {
+                // Insert into our custom public.users table IMMEDIATELY
+                require_once __DIR__ . '/../../services/DatabaseService.php';
+                try {
+                    $db = DatabaseService::getConnection();
+                    $stmt = $db->prepare("INSERT INTO users (id, email, role) VALUES (?, ?, 'user') ON CONFLICT (id) DO NOTHING");
+                    $stmt->execute([$user_id, $registered_email]);
+                } catch (Exception $e) {
+                    // Ignore duplicate key errors if trigger is already active
+                }
+            }
+            
             $success = "Account created successfully! You can now sign in.";
-            // Wait for user to trigger Supabase Email verification if enabled.
         } else {
-            $error = $data['msg'] ?? 'Registration failed. Please try again.';
+            $error = $data['error_description'] ?? ($data['msg'] ?? 'Registration failed. Please try again.');
         }
     }
 }
