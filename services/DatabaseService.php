@@ -32,8 +32,7 @@ class DatabaseService {
                 PDO::ATTR_EMULATE_PREPARES => false
             ]);
         } catch (PDOException $e) {
-            error_log("Database connection failure: " . $e->getMessage());
-            die("Secure database connectivity interface failed.");
+            die("Secure database connectivity interface failed. Details: " . $e->getMessage());
         }
     }
 

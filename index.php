@@ -25,10 +25,13 @@ require_once __DIR__ . '/config/env_loader.php';
 $request_uri = $_SERVER['REQUEST_URI'];
 $path = parse_url($request_uri, PHP_URL_PATH);
 
-// Remove base path if running in a subdirectory (adjust as needed)
-$base_path = '/space-shuter'; // Assuming it runs under localhost/space-shuter
+// Remove base path if running in a subdirectory
+$base_path = '/space-shuter';
 if (strpos($path, $base_path) === 0) {
     $path = substr($path, strlen($base_path));
+}
+if ($path !== '/') {
+    $path = rtrim($path, '/');
 }
 if ($path === '' || $path === false) {
     $path = '/';
