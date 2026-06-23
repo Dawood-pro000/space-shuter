@@ -2,10 +2,6 @@
 // services/DatabaseService.php
 
 class DatabaseService {
-<?php
-// services/DatabaseService.php
-
-class DatabaseService {
     private static $instance = null;
     private $conn;
 
@@ -22,6 +18,7 @@ class DatabaseService {
         }
 
         $dsn = "pgsql:host=$db_host;port=$db_port;dbname=$db_name";
+
         try {
             $this->conn = new PDO(
                 $dsn,
@@ -35,25 +32,6 @@ class DatabaseService {
             );
         } catch (PDOException $e) {
             die('Secure database connectivity interface failed. Details: ' . $e->getMessage());
-        }
-    }
-
-    public static function getConnection() {
-        if (!self::$instance) {
-            self::$instance = new DatabaseService();
-        }
-        return self::$instance->conn;
-    }
-}
-?>
-        try {
-            $this->conn = new PDO($dsn, $db_user, $db_pass, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false
-            ]);
-        } catch (PDOException $e) {
-            die("Secure database connectivity interface failed. Details: " . $e->getMessage());
         }
     }
 
