@@ -31,8 +31,7 @@ require_once __DIR__ . '/../../layouts/header.php';
         <?php endif; ?>
         
         <div class="p-10 md:p-14">
-            <div class="flex items-center justify-between mb-6">
-                <span class="text-xs font-semibold text-brand-green uppercase tracking-wider">Research Article</span>
+            <div class="flex items-center justify-end mb-6">
                 <span class="text-sm text-steel"><?= date('M d, Y', strtotime($post['publish_date'])) ?></span>
             </div>
             
@@ -43,9 +42,6 @@ require_once __DIR__ . '/../../layouts/header.php';
             <div class="prose prose-slate max-w-none text-slate leading-relaxed">
                 <p class="text-lg font-medium text-ink mb-8"><?= htmlspecialchars($post['abstract']) ?></p>
                 <?= $post['content'] // Raw HTML stored in DB ?>
-                <p class="mt-8 pt-8 border-t border-hairline text-sm text-steel">
-                    Information fetched directly from our knowledge base.
-                </p>
             </div>
         </div>
     </article>
