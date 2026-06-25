@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID REFERENCES auth.users NOT NULL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
+    username VARCHAR(255),
     role VARCHAR(50) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
     subscription_tier VARCHAR(50) DEFAULT 'free' CHECK (subscription_tier IN ('free', 'student', 'pro', 'enterprise')),
     total_study_hours INT DEFAULT 0,

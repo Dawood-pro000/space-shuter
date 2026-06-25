@@ -52,8 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 require_once __DIR__ . '/../../services/DatabaseService.php';
                 try {
                     $db = DatabaseService::getConnection();
-                    $stmt = $db->prepare("INSERT INTO users (id, email, role) VALUES (?, ?, 'user') ON CONFLICT (id) DO NOTHING");
-                    $stmt->execute([$user_id, $registered_email]);
+                    $stmt = $db->prepare("INSERT INTO users (id, email, username, role) VALUES (?, ?, ?, 'user') ON CONFLICT (id) DO NOTHING");
+                    $stmt->execute([$user_id, $registered_email, $_POST['username'] ?? '']);
                 } catch (Exception $e) {
                     // Ignore duplicate key errors if trigger is already active
                 }
@@ -90,6 +90,12 @@ require_once __DIR__ . '/../../layouts/header.php';
             <?php endif; ?>
 
             <form method="POST" action="/space-shuter/register" class="space-y-5">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-ink mb-1.5">Username</label>
+                    <input type="text" name="username" id="username" required placeholder="cool_astronaut_99" 
+                           class="w-full bg-canvas border border-hairline rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition-shadow">
+                </div>
+
                 <div>
                     <label for="email" class="block text-sm font-medium text-ink mb-1.5">Email address</label>
                     <input type="email" name="email" id="email" required placeholder="you@company.com" 

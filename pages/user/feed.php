@@ -31,6 +31,7 @@ $posts = $stmt->fetchAll();
                 <a href="/space-shuter/study-planner" class="block px-3 py-2 text-sm text-steel hover:text-ink hover:bg-surface/50 rounded-md transition-colors">Study Planner</a>
                 <a href="/space-shuter/library" class="block px-3 py-2 text-sm text-steel hover:text-ink hover:bg-surface/50 rounded-md transition-colors">My Library</a>
                 <a href="/space-shuter/saved" class="block px-3 py-2 text-sm text-steel hover:text-ink hover:bg-surface/50 rounded-md transition-colors">Saved Bookmarks</a>
+                <a href="/space-shuter/subscription" class="block px-3 py-2 text-sm text-steel hover:text-ink hover:bg-surface/50 rounded-md transition-colors">My Subscription</a>
             </div>
 
             <div class="bg-surface border border-hairline rounded-lg p-5">

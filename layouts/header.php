@@ -60,12 +60,14 @@
             <a href="/space-shuter/" class="font-semibold tracking-tight text-xl text-ink">Space Shutter</a>
             <div class="hidden md:flex items-center gap-6 text-sm font-medium text-steel">
                 <a href="/space-shuter/discover" class="hover:text-ink transition-colors">Discover</a>
-                <a href="/space-shuter/pricing" class="hover:text-ink transition-colors">Pricing</a>
+                <a href="/space-shuter/study-planner" class="hover:text-ink transition-colors">Study Plan</a>
+                <a href="/space-shuter/library" class="hover:text-ink transition-colors">Library</a>
                 <a href="/space-shuter/about" class="hover:text-ink transition-colors">About</a>
             </div>
         </div>
         <div class="flex items-center gap-4">
             <?php if(isset($_SESSION['user_id'])): ?>
+                <span class="text-sm font-medium text-brand-green mr-2">Hello, <?= htmlspecialchars($_SESSION['username'] ?? 'User') ?></span>
                 <a href="/space-shuter/feed" class="text-sm font-medium text-ink hover:text-slate transition-colors">Dashboard</a>
                 <a href="/space-shuter/logout" class="bg-surface text-ink border border-hairline px-4 py-2 rounded-full text-sm font-medium hover:bg-hairline transition-colors">Logout</a>
             <?php else: ?>

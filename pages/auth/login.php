@@ -44,20 +44,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['access_token'] = $data['access_token'];
             $_SESSION['refresh_token'] = $data['refresh_token'];
             
-            // Check Role from our custom public.users table
+            // Check Role and Username from our custom public.users table
             require_once __DIR__ . '/../../services/DatabaseService.php';
             $db = DatabaseService::getConnection();
-            $stmt = $db->prepare("SELECT role FROM users WHERE id = ?");
+            $stmt = $db->prepare("SELECT role, username FROM users WHERE id = ?");
             $stmt->execute([$data['user']['id']]);
             $user_data = $stmt->fetch();
             
             if ($user_data) {
                 $_SESSION['user_role'] = $user_data['role'];
+                $_SESSION['username'] = $user_data['username'];
             } else {
                 // If user doesn't exist in our table yet (e.g., fresh signup without trigger), insert them
-                $stmt = $db->prepare("INSERT INTO users (id, email, role) VALUES (?, ?, 'user')");
+                $stmt = $db->prepare("INSERT INTO users (id, email, username, role) VALUES (?, ?, '', 'user')");
                 $stmt->execute([$data['user']['id'], $data['user']['email']]);
                 $_SESSION['user_role'] = 'user';
+                $_SESSION['username'] = '';
             }
             
             if ($_SESSION['user_role'] === 'admin') {

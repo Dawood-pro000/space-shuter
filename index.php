@@ -71,6 +71,7 @@ $routes = [
     '/saved' => 'pages/user/saved.php',
     '/profile' => 'pages/user/profile.php',
     '/settings' => 'pages/user/settings.php',
+    '/subscription' => 'pages/user/subscription.php',
     '/assistant' => 'pages/user/assistant.php',
 
     // Admin Protected
