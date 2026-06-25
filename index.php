@@ -6,6 +6,11 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+// Load Composer Autoloader
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
+
 // Simple Autoloader (optional, if we use classes heavily)
 spl_autoload_register(function ($class_name) {
     $directories = ['services/', 'models/', 'utilities/', 'middleware/'];
@@ -39,6 +44,9 @@ if ($path === '' || $path === false) {
 
 // Route Map
 $routes = [
+    // Webhooks & API
+    '/api/stripe-webhook' => 'api/stripe-webhook.php',
+
     // Public Web
     '/' => 'pages/public/home.php',
     '/discover' => 'pages/public/discover.php',
@@ -46,6 +54,8 @@ $routes = [
     '/about' => 'pages/public/about.php',
     '/contact' => 'pages/public/contact.php',
     '/privacy' => 'pages/public/privacy.php',
+    '/checkout' => 'pages/public/checkout.php',
+    '/success' => 'pages/public/success.php',
 
     // Auth
     '/register' => 'pages/auth/register.php',

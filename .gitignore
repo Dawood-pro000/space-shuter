@@ -1,4 +1,4 @@
 .env
 *.html
-api/
+vendor/
 task/

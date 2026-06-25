@@ -44,7 +44,7 @@ require_once __DIR__ . '/../../layouts/header.php';
                 <li class="flex items-start gap-3"><svg class="w-5 h-5 text-brand-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>AI Assistant access (Gemini integration)</li>
                 <li class="flex items-start gap-3"><svg class="w-5 h-5 text-brand-green shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Priority email support</li>
             </ul>
-            <a href="/space-shuter/register" class="w-full bg-brand-green text-primary font-medium text-sm py-2.5 rounded-lg hover:bg-brand-green-deep transition-colors text-center">Upgrade to Commander</a>
+            <a href="/space-shuter/checkout" class="w-full bg-brand-green text-primary font-medium text-sm py-2.5 rounded-lg hover:bg-brand-green-deep transition-colors text-center">Upgrade to Commander</a>
         </div>
 
         <!-- Enterprise Tier -->
