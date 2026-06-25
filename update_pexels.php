@@ -5,30 +5,35 @@ require_once __DIR__ . '/services/DatabaseService.php';
 $pexels = new PexelsService();
 $db = DatabaseService::getConnection();
 
-echo "Fetching images from Pexels API...\n";
-// Let's get 30 premium space images
-$data = $pexels->searchSpaceImages('galaxy outer space planets nebula', 30);
+echo "Fetching specific images from Pexels API...\n";
 
-if ($data && isset($data['photos']) && count($data['photos']) > 0) {
-    $photos = $data['photos'];
+$stmt = $db->query("SELECT id, title FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 30");
+$posts = $stmt->fetchAll();
+
+$count = 0;
+foreach ($posts as $post) {
+    // Generate a simple query from the title
+    $query_words = explode(' ', $post['title']);
+    $query = implode(' ', array_slice($query_words, 0, 3)); // Use first 3 words of title
+    // Add "space" to ensure it stays somewhat relevant to space if the title is generic
+    $query = $query . " space galaxy";
     
-    // Get the posts we seeded earlier
-    $stmt = $db->query("SELECT id FROM posts ORDER BY created_at DESC LIMIT 30");
-    $posts = $stmt->fetchAll();
+    // Fetch 1 image for this specific query
+    $data = $pexels->searchSpaceImages($query, 1);
     
-    $count = 0;
-    foreach ($posts as $index => $post) {
-        if (isset($photos[$index])) {
-            // Using the 'large' landscape image format from Pexels
-            $img_url = $photos[$index]['src']['large'];
-            
-            $update = $db->prepare("UPDATE posts SET image_url = ? WHERE id = ?");
-            $update->execute([$img_url, $post['id']]);
-            $count++;
-        }
+    if ($data && isset($data['photos'][0])) {
+        $img_url = $data['photos'][0]['src']['large'];
+        
+        $update = $db->prepare("UPDATE posts SET image_url = ? WHERE id = ?");
+        $update->execute([$img_url, $post['id']]);
+        $count++;
+        echo "Updated '{$post['title']}' with matched image.\n";
+    } else {
+        echo "No specific image found for '{$post['title']}', skipping.\n";
     }
     
-    echo "Success! Replaced dummy images with $count REAL high-res images from Pexels.\n";
-} else {
-    echo "Failed to fetch from Pexels API. Please verify the API key is active.\n";
+    // Sleep slightly to avoid rapid rate-limiting
+    usleep(500000); // 0.5 seconds
 }
+
+echo "\nSuccess! Replaced dummy images with $count MATCHING high-res images from Pexels.\n";

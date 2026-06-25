@@ -17,7 +17,7 @@ try {
 <main class="pt-32 pb-24 px-8 max-w-5xl mx-auto min-h-[80vh]">
     <div class="mb-12">
         <h1 class="text-4xl font-semibold text-ink tracking-tight mb-4">Discover the Cosmos</h1>
-        <p class="text-slate text-lg max-w-2xl">Explore the latest aerospace discoveries, telemetry logs, and deep-space intelligence gathered directly from our API pipeline.</p>
+        <p class="text-slate text-lg max-w-2xl">Explore the latest aerospace discoveries, telemetry logs, and deep-space intelligence from around the universe.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

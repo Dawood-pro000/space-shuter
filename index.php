@@ -109,6 +109,9 @@ if (array_key_exists($path, $routes)) {
         http_response_code(404);
         echo "404 - Page View File Not Created Yet. ($file_to_load)";
     }
+} elseif (preg_match('/^\/article\/(.+)$/', $path, $matches)) {
+    $_GET['slug'] = $matches[1];
+    require __DIR__ . '/pages/user/article.php';
 } else {
     // 404 Not Found
     http_response_code(404);
