@@ -51,6 +51,7 @@ $routes = [
     '/' => 'pages/public/home.php',
     '/discover' => 'pages/public/discover.php',
     '/planet' => 'pages/public/planet.php',
+    '/planet-detail' => 'pages/public/planet-detail.php',
     '/pricing' => 'pages/public/pricing.php',
     '/about' => 'pages/public/about.php',
     '/contact' => 'pages/public/contact.php',

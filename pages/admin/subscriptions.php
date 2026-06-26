@@ -18,11 +18,15 @@ try {
 }
 ?>
 
-<main class="pt-32 pb-24 px-8 max-w-6xl mx-auto min-h-[80vh]">
-    <div class="mb-8 flex justify-between items-center">
-        <h1 class="text-3xl font-semibold text-ink">Subscriptions & Payments</h1>
-        <a href="/space-shuter/admin" class="text-brand-green hover:underline text-sm font-medium">← Back to Dashboard</a>
-    </div>
+<main class="pt-32 pb-24 px-8 max-w-7xl mx-auto min-h-[80vh]">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <!-- Admin Sidebar -->
+        <?php require_once __DIR__ . '/../../admin/layouts/sidebar.php'; ?>
+        
+        <div class="col-span-3">
+            <div class="mb-8 flex justify-between items-center">
+                <h1 class="text-3xl font-semibold text-ink">Subscriptions & Payments</h1>
+            </div>
 
     <div class="bg-surface border border-hairline rounded-lg overflow-hidden">
         <table class="w-full text-left border-collapse">
@@ -54,7 +58,9 @@ try {
                     <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
-        </table>
+            </table>
+        </div>
+    </div>
     </div>
 </main>
 

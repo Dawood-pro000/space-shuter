@@ -14,6 +14,23 @@ $user = $stmt->fetch();
 
 $displayName = !empty($user['username']) ? $user['username'] : explode('@', $user['email'])[0];
 $studyHours = $user['total_study_hours'] ?? 0;
+
+$success_msg = '';
+$error_msg = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_telemetry'])) {
+    $new_username = trim($_POST['username']);
+    try {
+        $updateStmt = $db->prepare("UPDATE users SET username = ? WHERE id = ?");
+        $updateStmt->execute([$new_username, $user_id]);
+        $success_msg = "Telemetry updated successfully.";
+        $displayName = $new_username; // Update UI immediately
+        $user['username'] = $new_username;
+        $_SESSION['username'] = $new_username; // Update session so header reflects change
+    } catch (Exception $e) {
+        $error_msg = "Error updating telemetry: " . $e->getMessage();
+    }
+}
 ?>
 
 <main class="pt-32 pb-24 px-8 min-h-[90vh] max-w-4xl mx-auto relative">
@@ -51,10 +68,17 @@ $studyHours = $user['total_study_hours'] ?? 0;
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Form section -->
-            <form class="space-y-6">
+            <!-- Form section -->
+            <form method="POST" class="space-y-6">
+                <?php if ($success_msg): ?>
+                    <div class="bg-brand-green/20 text-brand-green border border-brand-green p-3 rounded text-sm"><?= $success_msg ?></div>
+                <?php endif; ?>
+                <?php if ($error_msg): ?>
+                    <div class="bg-red-500/20 text-red-500 border border-red-500 p-3 rounded text-sm"><?= $error_msg ?></div>
+                <?php endif; ?>
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-2">Display Name</label>
-                    <input type="text" value="<?= htmlspecialchars($user['username'] ?? '') ?>" class="w-full bg-[#05050a] border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-purple transition-colors shadow-inner font-light" placeholder="Enter designation">
+                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" class="w-full bg-[#05050a] border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-purple transition-colors shadow-inner font-light" placeholder="Enter designation">
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-2">Comlink (Email)</label>
@@ -63,7 +87,7 @@ $studyHours = $user['total_study_hours'] ?? 0;
                 </div>
                 
                 <div class="pt-6 border-t border-white/10">
-                    <button type="button" class="bg-brand-purple text-white uppercase tracking-widest font-bold text-xs px-8 py-3 rounded hover:bg-brand-purple-deep transition-all shadow-[0_0_15px_rgba(126,34,206,0.3)] hover:shadow-[0_0_25px_rgba(126,34,206,0.5)]">
+                    <button type="submit" name="update_telemetry" class="bg-brand-purple text-white uppercase tracking-widest font-bold text-xs px-8 py-3 rounded hover:bg-brand-purple-deep transition-all shadow-[0_0_15px_rgba(126,34,206,0.3)] hover:shadow-[0_0_25px_rgba(126,34,206,0.5)]">
                         Update Telemetry
                     </button>
                 </div>
@@ -73,10 +97,10 @@ $studyHours = $user['total_study_hours'] ?? 0;
             <div class="space-y-4">
                 <h3 class="text-xs uppercase tracking-widest text-gray-500 font-bold mb-4 border-b border-white/5 pb-2">Access Protocols</h3>
                 
-                <a href="/space-shuter/library" class="flex items-center justify-between p-4 bg-surface border border-white/5 rounded group hover:border-white/20 transition-all">
+                <a href="/space-shuter/profile" class="flex items-center justify-between p-4 bg-surface border border-white/5 rounded group hover:border-white/20 transition-all">
                     <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                        <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">My Library</span>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">User Information</span>
                     </div>
                     <svg class="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </a>

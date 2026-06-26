@@ -7,16 +7,15 @@ require_once __DIR__ . '/../../services/DatabaseService.php';
 try {
     $db = DatabaseService::getConnection();
     // Fetch latest 9 published posts for discover
-    $stmt = $db->query("SELECT title, slug, abstract, image_url, publish_date FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 9");
+    $stmt = $db->query("SELECT title, slug, abstract, image_url, publish_date, category FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 9");
     $posts = $stmt->fetchAll();
 } catch (Exception $e) {
     $posts = [];
 }
 
-// Generate random luxury prices for UI purposes
-function getReservePrice() {
-    $prices = ['$45,000', '$28,000', '$15,000', '$120,000', '$85,000'];
-    return $prices[array_rand($prices)];
+function getReadingTime() {
+    $times = ['3 min read', '5 min read', '7 min read', '10 min read', '12 min read'];
+    return $times[array_rand($times)];
 }
 ?>
 
@@ -26,7 +25,7 @@ function getReservePrice() {
 
     <div class="text-center mb-20 relative z-10">
         <h1 class="text-5xl font-serif font-bold text-white uppercase tracking-widest mb-6">The Observatory</h1>
-        <p class="text-gray-400 font-light tracking-wide max-w-2xl mx-auto">Experience the cosmos through exclusive live events, celestial phenomena, and immersive deep-space intelligence.</p>
+        <p class="text-gray-400 font-light tracking-wide max-w-2xl mx-auto">Read our latest articles and learn about new discoveries in space.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
@@ -37,9 +36,9 @@ function getReservePrice() {
         <?php else: ?>
             <?php foreach ($posts as $post): ?>
                 <div class="bg-surface border border-white/5 rounded-xl overflow-hidden group hover:border-white/10 transition-all shadow-2xl flex flex-col h-full relative">
-                    <!-- Featured Event Tag -->
+                    <!-- Featured Tag -->
                     <div class="absolute top-4 right-4 z-10 bg-brand-purple text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-[0_0_10px_rgba(126,34,206,0.5)]">
-                        Event
+                        <?= htmlspecialchars($post['category'] ?? 'Article') ?>
                     </div>
 
                     <?php if ($post['image_url']): ?>
@@ -66,8 +65,8 @@ function getReservePrice() {
                         <p class="text-sm text-gray-400 line-clamp-3 mb-8 font-light flex-1"><?= htmlspecialchars($post['abstract']) ?></p>
                         
                         <div class="flex items-center justify-between mt-auto">
-                            <span class="text-brand-gold font-bold text-sm tracking-wider"><?= getReservePrice() ?> <span class="text-[10px] text-gray-500 font-normal lowercase tracking-normal">per guest</span></span>
-                            <a href="/space-shuter/article/<?= htmlspecialchars($post['slug']) ?>" class="bg-brand-purple text-white text-xs px-5 py-2.5 rounded font-semibold transition-all hover:bg-brand-purple-deep shadow-[0_0_10px_rgba(126,34,206,0.2)]">Reserve</a>
+                            <span class="text-brand-gold font-bold text-sm tracking-wider"><?= getReadingTime() ?></span>
+                            <a href="/space-shuter/article/<?= htmlspecialchars($post['slug']) ?>" class="bg-brand-purple text-white text-xs px-5 py-2.5 rounded font-semibold transition-all hover:bg-brand-purple-deep shadow-[0_0_10px_rgba(126,34,206,0.2)]">Read More</a>
                         </div>
                     </div>
                 </div>
