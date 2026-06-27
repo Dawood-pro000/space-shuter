@@ -1,6 +1,8 @@
 <?php
 // api/chat.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../config/env_loader.php';
 
 header('Content-Type: application/json');
