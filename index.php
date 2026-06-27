@@ -60,10 +60,13 @@ $routes = [
     '/checkout' => 'pages/public/checkout.php',
     '/success' => 'pages/public/success.php',
 
-    // Auth
-    '/register' => 'pages/auth/register.php',
-    '/login' => 'pages/auth/login.php',
-    '/logout' => 'pages/auth/logout.php',
+    // Auth (support both /login and /auth/login formats)
+    '/register'       => 'pages/auth/register.php',
+    '/auth/register'  => 'pages/auth/register.php',
+    '/login'          => 'pages/auth/login.php',
+    '/auth/login'     => 'pages/auth/login.php',
+    '/logout'         => 'pages/auth/logout.php',
+    '/auth/logout'    => 'pages/auth/logout.php',
     '/reset-password' => 'pages/auth/reset-password.php',
 
     // User Protected
@@ -94,8 +97,14 @@ $routes = [
 if (array_key_exists($path, $routes)) {
     $file_to_load = __DIR__ . '/' . $routes[$path];
     
-    // Public routes that don't need auth
-    $public_routes = ['/', '/login', '/register', '/logout', '/api/chat', '/api/stripe-webhook'];
+    // Public routes that don't need auth (guests can browse freely)
+    $public_routes = [
+        '/', '/login', '/register', '/logout',
+        '/auth/login', '/auth/register', '/auth/logout',
+        '/discover', '/planet', '/planet-detail',
+        '/pricing', '/about', '/contact', '/privacy',
+        '/api/chat', '/api/stripe-webhook'
+    ];
     
     // Apply Middleware
     if (strpos($path, '/admin') === 0) {
@@ -116,9 +125,8 @@ if (array_key_exists($path, $routes)) {
         echo "404 - Page View File Not Created Yet. ($file_to_load)";
     }
 } elseif (preg_match('/^\/article\/(.+)$/', $path, $matches)) {
+    // Article pages are public — guests can read articles
     $_GET['slug'] = $matches[1];
-    require_once __DIR__ . '/middleware/AuthMiddleware.php';
-    AuthMiddleware::check();
     require __DIR__ . '/pages/user/article.php';
 } else {
     // 404 Not Found

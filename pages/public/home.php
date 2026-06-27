@@ -4,14 +4,18 @@ $page_title = 'Space Shutter | Beyond Earth, Into Infinity';
 require_once __DIR__ . '/../../layouts/header.php';
 require_once __DIR__ . '/../../services/DatabaseService.php';
 
-$db = DatabaseService::getConnection();
+$all_posts = [];
+try {
+    $db = DatabaseService::getConnection();
+    $stmt = $db->query("SELECT title, slug, abstract, image_url, publish_date FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 6");
+    $all_posts = $stmt->fetchAll();
+} catch (Exception $e) {
+    // DB unavailable — page still loads for guests, just without dynamic posts
+    $all_posts = [];
+}
 
-// Fetch latest posts to populate sections (mapped to the luxury theme)
-$stmt = $db->query("SELECT title, slug, abstract, image_url, publish_date FROM posts WHERE status = 'published' ORDER BY created_at DESC LIMIT 6");
-$all_posts = $stmt->fetchAll();
-
-$missions = array_slice($all_posts, 0, 3);
-$destinations = array_slice($all_posts, 3, 3);
+$missions      = array_slice($all_posts, 0, 3);
+$destinations  = array_slice($all_posts, 3, 3);
 
 function getRandomFact() {
     $facts = ['Fascinating', 'Incredible', 'Mind-blowing', 'Awe-inspiring', 'Must-see'];

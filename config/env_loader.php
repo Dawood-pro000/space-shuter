@@ -12,18 +12,29 @@ function loadEnv($path) {
             continue;
         }
 
+        if (strpos($line, '=') === false) {
+            continue;
+        }
+
         list($name, $value) = explode('=', $line, 2);
-        $name = trim($name);
+        $name  = trim($name);
         $value = trim($value);
 
-        // Remove quotes if present
-        if (preg_match('/^"(.*)"$/', $value, $matches) || preg_match("/^'(.*)'$/", $value, $matches)) {
+        // Remove surrounding quotes if present
+        if (preg_match('/^"(.*)"$/s', $value, $matches) || preg_match("/^'(.*)'$/s", $value, $matches)) {
             $value = $matches[1];
         }
 
-        if (!array_key_exists($name, $_SERVER) && !array_key_exists($name, $_ENV)) {
+        // Always set non-empty values from .env — this ensures local .env
+        // overrides any stale/empty system environment variables.
+        if (!empty($value)) {
             putenv(sprintf('%s=%s', $name, $value));
-            $_ENV[$name] = $value;
+            $_ENV[$name]    = $value;
+            $_SERVER[$name] = $value;
+        } elseif (!getenv($name)) {
+            // Only set empty values if not already defined
+            putenv(sprintf('%s=%s', $name, $value));
+            $_ENV[$name]    = $value;
             $_SERVER[$name] = $value;
         }
     }
