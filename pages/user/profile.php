@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_telemetry'])) 
     <!-- Starry background overlay -->
     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 pointer-events-none"></div>
 
-    <div class="relative z-10 bg-[#111116] border border-white/10 rounded-2xl p-8 md:p-12 shadow-2xl overflow-hidden">
+    <div class="relative z-10 bg-black/60 backdrop-blur-md border border-white/10 rounded-3xl p-8 md:p-12 shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
         <!-- Glow effect -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-brand-purple/20 blur-[100px] rounded-full pointer-events-none"></div>
 
@@ -71,18 +71,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_telemetry'])) 
             <!-- Form section -->
             <form method="POST" class="space-y-6">
                 <?php if ($success_msg): ?>
-                    <div class="bg-brand-green/20 text-brand-green border border-brand-green p-3 rounded text-sm"><?= $success_msg ?></div>
+                    <div class="bg-green-500/20 text-green-400 border border-green-500/50 p-3 rounded text-sm"><?= $success_msg ?></div>
                 <?php endif; ?>
                 <?php if ($error_msg): ?>
-                    <div class="bg-red-500/20 text-red-500 border border-red-500 p-3 rounded text-sm"><?= $error_msg ?></div>
+                    <div class="bg-red-500/20 text-red-500 border border-red-500/50 p-3 rounded text-sm"><?= $error_msg ?></div>
                 <?php endif; ?>
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-2">Display Name</label>
-                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" class="w-full bg-[#05050a] border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-purple transition-colors shadow-inner font-light" placeholder="Enter designation">
+                    <input type="text" name="username" value="<?= htmlspecialchars($user['username'] ?? '') ?>" class="w-full bg-white/5 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-brand-purple focus:bg-white/10 transition-colors shadow-inner font-light" placeholder="Enter designation">
                 </div>
                 <div>
                     <label class="block text-xs uppercase tracking-widest text-gray-500 font-bold mb-2">Comlink (Email)</label>
-                    <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled class="w-full bg-[#05050a]/50 border border-white/5 rounded px-4 py-3 text-gray-600 cursor-not-allowed font-light">
+                    <input type="email" value="<?= htmlspecialchars($user['email']) ?>" disabled class="w-full bg-black/50 border border-white/5 rounded px-4 py-3 text-gray-600 cursor-not-allowed font-light">
                     <p class="text-[10px] text-brand-gold mt-2 uppercase tracking-wide">Comlink cannot be altered post-registration.</p>
                 </div>
                 

@@ -166,22 +166,26 @@ $page_title = $data['name'] . ' | Space Shutter';
 require_once __DIR__ . '/../../layouts/header.php';
 ?>
 
-<main class="relative min-h-screen bg-black">
+<main class="relative min-h-screen bg-transparent">
     <!-- Hero Section -->
-    <div class="relative h-[60vh] flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 bg-black">
-            <img src="<?= htmlspecialchars($data['image']) ?>" alt="<?= htmlspecialchars($data['name']) ?>" class="w-full h-full object-cover opacity-50 mix-blend-screen scale-105">
-            <div class="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent"></div>
+    <div class="relative h-[60vh] flex flex-col items-center justify-center overflow-hidden pt-20">
+        <!-- CSS Rotating Planet -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-30 blur-[2px] z-0" style="background: radial-gradient(circle, rgba(126,34,206,0.3) 0%, rgba(0,0,0,0) 70%);"></div>
+        
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full overflow-hidden z-0 shadow-[0_0_100px_rgba(126,34,206,0.4)] animate-[spin_60s_linear_infinite]" style="box-shadow: inset -20px -20px 40px rgba(0,0,0,0.8), inset 10px 10px 20px rgba(255,255,255,0.2), 0 0 50px rgba(126,34,206,0.3);">
+            <img src="<?= htmlspecialchars($data['image']) ?>" alt="<?= htmlspecialchars($data['name']) ?>" class="w-full h-full object-cover scale-110">
         </div>
         
-        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-16">
-            <div class="inline-block border border-brand-purple/50 bg-brand-purple/10 text-brand-purple px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(126,34,206,0.3)] mb-4">
+        <div class="absolute inset-0 bg-gradient-to-t from-transparent via-black/20 to-transparent z-0 pointer-events-none"></div>
+        
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto mt-auto mb-10">
+            <div class="inline-block border border-brand-purple/50 bg-black/50 backdrop-blur-md text-brand-purple px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-[0_0_15px_rgba(126,34,206,0.3)] mb-4">
                 <?= htmlspecialchars($data['type']) ?>
             </div>
-            <h1 class="text-6xl md:text-8xl font-serif font-bold text-white uppercase tracking-widest drop-shadow-2xl mb-6">
+            <h1 class="text-6xl md:text-8xl font-serif font-bold text-white uppercase tracking-widest drop-shadow-[0_0_20px_rgba(0,0,0,1)] mb-6">
                 <?= htmlspecialchars($data['name']) ?>
             </h1>
-            <p class="text-lg md:text-xl text-gray-300 font-light tracking-wide leading-relaxed">
+            <p class="text-lg md:text-xl text-gray-200 font-light tracking-wide leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
                 <?= htmlspecialchars($data['desc']) ?>
             </p>
         </div>

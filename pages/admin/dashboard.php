@@ -1,12 +1,13 @@
 <?php
 $page_title = 'Admin Dashboard | Space Shutter';
-require_once __DIR__ . '/../../layouts/header.php';
 require_once __DIR__ . '/../../services/DatabaseService.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: /space-shuter/auth/login');
     exit;
 }
+
+require_once __DIR__ . '/../../layouts/header.php';
 
 $db = DatabaseService::getConnection();
 

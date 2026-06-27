@@ -46,6 +46,7 @@ if ($path === '' || $path === false) {
 $routes = [
     // Webhooks & API
     '/api/stripe-webhook' => 'api/stripe-webhook.php',
+    '/api/chat' => 'api/chat.php',
 
     // Public Web
     '/' => 'pages/public/home.php',
@@ -93,13 +94,16 @@ $routes = [
 if (array_key_exists($path, $routes)) {
     $file_to_load = __DIR__ . '/' . $routes[$path];
     
+    // Public routes that don't need auth
+    $public_routes = ['/', '/login', '/register', '/logout', '/api/chat', '/api/stripe-webhook'];
+    
     // Apply Middleware
     if (strpos($path, '/admin') === 0) {
         require_once __DIR__ . '/middleware/AuthMiddleware.php';
         require_once __DIR__ . '/middleware/AdminMiddleware.php';
         AuthMiddleware::check();
         AdminMiddleware::check();
-    } elseif (strpos($path, '/feed') === 0 || strpos($path, '/study-planner') === 0 || strpos($path, '/journey') === 0 || strpos($path, '/library') === 0 || strpos($path, '/saved') === 0 || strpos($path, '/profile') === 0 || strpos($path, '/settings') === 0 || strpos($path, '/assistant') === 0) {
+    } elseif (!in_array($path, $public_routes)) {
         require_once __DIR__ . '/middleware/AuthMiddleware.php';
         AuthMiddleware::check();
     }
@@ -113,6 +117,8 @@ if (array_key_exists($path, $routes)) {
     }
 } elseif (preg_match('/^\/article\/(.+)$/', $path, $matches)) {
     $_GET['slug'] = $matches[1];
+    require_once __DIR__ . '/middleware/AuthMiddleware.php';
+    AuthMiddleware::check();
     require __DIR__ . '/pages/user/article.php';
 } else {
     // 404 Not Found

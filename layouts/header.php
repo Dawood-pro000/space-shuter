@@ -8,6 +8,15 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title><?= isset($page_title) ? htmlspecialchars($page_title) : 'Space Shutter | Beyond Earth, Into Infinity' ?></title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- GSAP & Lenis for Smooth Apple-style Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <!-- Three.js for 3D Planets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <!-- Add Cinzel for headings, Inter for body -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
@@ -81,8 +90,7 @@
         <div class="hidden md:flex items-center justify-center gap-8 text-sm font-medium text-gray-300 bg-white/5 border border-white/10 rounded-full px-8 py-2.5 backdrop-blur-lg shadow-[0_0_20px_rgba(255,255,255,0.05)] absolute left-1/2 -translate-x-1/2">
             <a href="/space-shuter/planet" class="hover:text-white hover-glow transition-colors">Destinations</a>
             <a href="/space-shuter/discover" class="hover:text-white hover-glow transition-colors">Discover</a>
-            <a href="/space-shuter/library" class="hover:text-white hover-glow transition-colors">Archive</a>
-            <a href="/space-shuter/books" class="hover:text-white hover-glow transition-colors">Books</a>
+            <a href="/space-shuter/library" class="hover:text-white hover-glow transition-colors">Books</a>
             <a href="/space-shuter/study-planner" class="hover:text-white hover-glow transition-colors">Study Planner</a>
         </div>
         
@@ -189,10 +197,33 @@
 
         function animateStars() {
             ctx.clearRect(0, 0, width, height);
+            
+            // First pass: Draw all particles
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
             }
+            
+            // Second pass: Draw connecting lines (Constellation effect)
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // If particles are close enough, connect them
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - distance/1000})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
+                }
+            }
+            
             requestAnimationFrame(animateStars);
         }
 
