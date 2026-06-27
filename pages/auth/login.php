@@ -1,75 +1,108 @@
 <?php
 // pages/auth/login.php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../../config/env_loader.php';
+
 $page_title = 'Sign In | Space Shutter';
 
 $error = '';
 
+// If already logged in, redirect
+if (isset($_SESSION['user_id'])) {
+    $role = $_SESSION['user_role'] ?? 'user';
+    header('Location: /space-shuter/' . ($role === 'admin' ? 'admin' : 'feed'));
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_once __DIR__ . '/../../config/env_loader.php';
-    
-    $email = trim($_POST['email'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    
+
     if (empty($email) || empty($password)) {
         $error = "Email and password are required.";
     } else {
-        $supabaseUrl = rtrim(getenv('SUPABASE_URL'), '/');
+        $supabaseUrl     = rtrim(getenv('SUPABASE_URL'), '/');
         $supabaseAnonKey = getenv('SUPABASE_ANON_KEY');
-        
-        $endpoint = $supabaseUrl . '/auth/v1/token?grant_type=password';
-        
-        $payload = json_encode([
-            'email' => $email,
-            'password' => $password
-        ]);
-        
-        $ch = curl_init($endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "apikey: {$supabaseAnonKey}",
-            "Content-Type: application/json"
-        ]);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        $data = json_decode($response, true);
-        
-        if ($httpCode >= 200 && $httpCode < 300) {
-            // Success
-            $_SESSION['user_id'] = $data['user']['id'];
-            $_SESSION['access_token'] = $data['access_token'];
-            $_SESSION['refresh_token'] = $data['refresh_token'];
-            
-            // Check Role and Username from our custom public.users table
-            require_once __DIR__ . '/../../services/DatabaseService.php';
-            $db = DatabaseService::getConnection();
-            $stmt = $db->prepare("SELECT role, username FROM users WHERE id = ?");
-            $stmt->execute([$data['user']['id']]);
-            $user_data = $stmt->fetch();
-            
-            if ($user_data) {
-                $_SESSION['user_role'] = $user_data['role'];
-                $_SESSION['username'] = $user_data['username'];
-            } else {
-                // If user doesn't exist in our table yet (e.g., fresh signup without trigger), insert them
-                $stmt = $db->prepare("INSERT INTO users (id, email, username, role) VALUES (?, ?, '', 'user')");
-                $stmt->execute([$data['user']['id'], $data['user']['email']]);
-                $_SESSION['user_role'] = 'user';
-                $_SESSION['username'] = '';
-            }
-            
-            if ($_SESSION['user_role'] === 'admin') {
-                header('Location: /space-shuter/admin');
-            } else {
-                header('Location: /space-shuter/feed');
-            }
-            exit;
+
+        if (empty($supabaseUrl) || empty($supabaseAnonKey)) {
+            $error = "Server configuration error. Please contact administrator.";
         } else {
-            $error = $data['error_description'] ?? 'Invalid email or password.';
+            $endpoint = $supabaseUrl . '/auth/v1/token?grant_type=password';
+            $payload  = json_encode([
+                'email'    => $email,
+                'password' => $password
+            ]);
+
+            $ch = curl_init($endpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                "apikey: {$supabaseAnonKey}",
+                "Content-Type: application/json"
+            ]);
+
+            $response  = curl_exec($ch);
+            $httpCode  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError = curl_error($ch);
+            curl_close($ch);
+
+            if ($curlError) {
+                $error = "Connection error: " . $curlError;
+            } elseif ($httpCode >= 200 && $httpCode < 300) {
+                $data = json_decode($response, true);
+
+                // Store session data
+                $_SESSION['user_id']      = $data['user']['id'];
+                $_SESSION['access_token'] = $data['access_token'];
+
+                // Get role and username from our public.users table
+                require_once __DIR__ . '/../../services/DatabaseService.php';
+                try {
+                    $db   = DatabaseService::getConnection();
+                    $stmt = $db->prepare("SELECT role, username FROM users WHERE id = ?");
+                    $stmt->execute([$data['user']['id']]);
+                    $user_data = $stmt->fetch();
+
+                    if ($user_data) {
+                        $_SESSION['user_role'] = $user_data['role'];
+                        $_SESSION['username']  = $user_data['username'];
+                    } else {
+                        // Insert if not yet in our custom table
+                        $stmt = $db->prepare("INSERT INTO users (id, email, username, role) VALUES (?, ?, '', 'user') ON CONFLICT (id) DO NOTHING");
+                        $stmt->execute([$data['user']['id'], $data['user']['email']]);
+                        $_SESSION['user_role'] = 'user';
+                        $_SESSION['username']  = '';
+                    }
+                } catch (Exception $e) {
+                    // DB error: still allow login, default to user role
+                    $_SESSION['user_role'] = 'user';
+                    $_SESSION['username']  = '';
+                }
+
+                if ($_SESSION['user_role'] === 'admin') {
+                    header('Location: /space-shuter/admin');
+                } else {
+                    header('Location: /space-shuter/feed');
+                }
+                exit;
+            } else {
+                $data   = json_decode($response, true);
+                $errMsg = $data['error_description'] ?? ($data['msg'] ?? ($data['message'] ?? ''));
+                if (!empty($errMsg)) {
+                    if (stripos($errMsg, 'invalid') !== false || stripos($errMsg, 'credentials') !== false) {
+                        $error = "Invalid email or password.";
+                    } else {
+                        $error = $errMsg;
+                    }
+                } else {
+                    $error = "Login failed (code: $httpCode). Please try again.";
+                }
+            }
         }
     }
 }
@@ -94,7 +127,8 @@ require_once __DIR__ . '/../../layouts/header.php';
             <form method="POST" action="/space-shuter/login" class="space-y-5">
                 <div>
                     <label for="email" class="block text-sm font-medium text-ink mb-1.5">Email address</label>
-                    <input type="email" name="email" id="email" required placeholder="you@company.com" 
+                    <input type="email" name="email" id="email" required placeholder="you@example.com"
+                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                            class="w-full bg-canvas border border-hairline rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-green focus:border-transparent transition-shadow">
                 </div>
                 
