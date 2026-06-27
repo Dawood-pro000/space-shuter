@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (strlen($password) < 6) {
         $error = "Password must be at least 6 characters.";
     } else {
-        $supabaseUrl     = rtrim(getenv('SUPABASE_URL'), '/');
-        $supabaseAnonKey = getenv('SUPABASE_ANON_KEY');
+        $supabaseUrl     = rtrim($_ENV['SUPABASE_URL'] ?? getenv('SUPABASE_URL') ?? '', '/');
+        $supabaseAnonKey = $_ENV['SUPABASE_ANON_KEY'] ?? getenv('SUPABASE_ANON_KEY') ?? '';
 
         if (empty($supabaseUrl) || empty($supabaseAnonKey)) {
             $error = "Server configuration error. Please contact the administrator.";

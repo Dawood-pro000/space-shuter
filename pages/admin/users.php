@@ -3,7 +3,7 @@ $page_title = 'Manage Users | Space Shutter';
 require_once __DIR__ . '/../../layouts/header.php';
 require_once __DIR__ . '/../../services/DatabaseService.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: /space-shuter/auth/login');
     exit;
 }

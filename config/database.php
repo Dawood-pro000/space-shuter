@@ -2,11 +2,11 @@
 // config/database.php
 // Project Vision - Supabase PostgreSQL Connection Config
 
-define('DB_HOST', getenv('SUPABASE_DB_HOST') ?: 'aws-0-us-east-1.pooler.supabase.com'); // Replace with your actual pooler host if different
-define('DB_PORT', getenv('SUPABASE_DB_PORT') ?: '5432');
-define('DB_NAME', getenv('SUPABASE_DB_NAME') ?: 'postgres');
-define('DB_USER', getenv('SUPABASE_DB_USER') ?: 'postgres.your_project_id');
-define('DB_PASS', getenv('SUPABASE_DB_PASSWORD'));
+define('DB_HOST', $_ENV['SUPABASE_DB_HOST'] ?? getenv('SUPABASE_DB_HOST') ?: 'aws-0-us-east-1.pooler.supabase.com'); // Replace with your actual pooler host if different
+define('DB_PORT', $_ENV['SUPABASE_DB_PORT'] ?? getenv('SUPABASE_DB_PORT') ?: '5432');
+define('DB_NAME', $_ENV['SUPABASE_DB_NAME'] ?? getenv('SUPABASE_DB_NAME') ?: 'postgres');
+define('DB_USER', $_ENV['SUPABASE_DB_USER'] ?? getenv('SUPABASE_DB_USER') ?: 'postgres.your_project_id');
+define('DB_PASS', $_ENV['SUPABASE_DB_PASSWORD'] ?? getenv('SUPABASE_DB_PASSWORD'));
 
 class Database {
     private static $instance = null;
